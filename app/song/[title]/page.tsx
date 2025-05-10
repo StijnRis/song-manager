@@ -6,7 +6,6 @@ export default async function SongPage({
 }: {
     params: Promise<{ title: string }>;
 }) {
-    
     const title = decodeURIComponent((await params).title).replace(/%20/g, " ");
     const song = await getSong(title);
 
@@ -14,9 +13,5 @@ export default async function SongPage({
         return <div>Song not found</div>;
     }
 
-    return (
-        <div className="container mx-auto p-4">
-            <SongDetails song={song} />
-        </div>
-    );
+    return <SongDetails song={song} />;
 }

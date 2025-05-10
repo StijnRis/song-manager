@@ -39,9 +39,15 @@ export async function getSong(title: string): Promise<Song | null> {
         await fs.writeFile(metadataPath, JSON.stringify({}, null, 2));
     }
     const metadata = await fs.readFile(metadataPath, "utf-8");
-    const data = JSON.parse(metadata);
+    const data: Record<string, any> = JSON.parse(metadata);
     const files = await fs.readdir(folderPath);
-    return { title, ...data, files };
+    return {
+        title,
+        files,
+        fileScores: data.fileScores || {},
+        youtubeId: data.youtubeId || "",
+        createdAt: data.createdAt || "",
+    };
 }
 
 export async function addSong(title: string): Promise<Song | null> {
@@ -51,10 +57,12 @@ export async function addSong(title: string): Promise<Song | null> {
         await fs.mkdir(folderPath, { recursive: true });
 
         // Save metadata
-        const song = {
+        const song: Song = {
             title,
             createdAt: new Date().toISOString(),
             files: [],
+            fileScores: {},
+            youtubeId: "",
         };
         await fs.writeFile(
             path.join(folderPath, "metadata.json"),
@@ -66,4 +74,42 @@ export async function addSong(title: string): Promise<Song | null> {
         console.error("Error adding song:", error);
         return null;
     }
+}
+
+export async function addSongScore(
+    title: string,
+    fileName: string,
+    proficiency: number | null,
+    rating: number | null
+): Promise<void> {
+    const folderPath = path.join(DATA_DIR, `${title}`);
+    const metadataPath = path.join(folderPath, "metadata.json");
+    let metadata: any = {};
+    try {
+        await fs.access(metadataPath);
+        const file = await fs.readFile(metadataPath, "utf-8");
+        metadata = JSON.parse(file);
+    } catch {
+        // If file doesn't exist, start with empty
+    }
+    if (!metadata.fileScores) metadata.fileScores = {};
+    if (!metadata.fileScores[fileName]) metadata.fileScores[fileName] = {};
+    const now = new Date().toISOString();
+    if (typeof proficiency === "number") {
+        if (!Array.isArray(metadata.fileScores[fileName].proficiency))
+            metadata.fileScores[fileName].proficiency = [];
+        metadata.fileScores[fileName].proficiency.push({
+            score: proficiency,
+            playedAt: now,
+        });
+    }
+    if (typeof rating === "number") {
+        if (!Array.isArray(metadata.fileScores[fileName].rating))
+            metadata.fileScores[fileName].rating = [];
+        metadata.fileScores[fileName].rating.push({
+            score: rating,
+            playedAt: now,
+        });
+    }
+    await fs.writeFile(metadataPath, JSON.stringify(metadata, null, 2));
 }
