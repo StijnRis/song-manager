@@ -1,23 +1,21 @@
-import { getDataDir } from "@/app/utils/fileManager";
+import { getFullPath } from "@/app/utils/fileManager";
 import fs from "fs/promises";
 import { NextResponse } from "next/server";
-import path from "path";
 
 export async function GET(
     request: Request,
-    { params }: { params: Promise<{ slug: string }> }
+    { params }: { params: Promise<{ title: string; file: string }> }
 ) {
-    const { slug } = await params;
+    const { title, file } = await params;
 
-    const filePath = path.join(await getDataDir(), ...slug);
-    console.log("filePath", filePath);
+    const filePath = await getFullPath(title, file);
     try {
         const fileBuffer = await fs.readFile(filePath);
 
         return new Response(fileBuffer, {
             status: 200,
             headers: {
-                "Content-Disposition": 'inline; filename="' + slug + '"',
+                "Content-Disposition": 'inline; filename="' + file + '"',
             },
         });
     } catch (err) {

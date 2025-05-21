@@ -2,7 +2,7 @@
 
 import Link from "next/link";
 import { useEffect, useState } from "react";
-import { Song } from "../types";
+import { Song } from "../utils/types";
 
 export default function SongList({ songs }: { songs: Song[] }) {
     const [searchQuery, setSearchQuery] = useState("");
@@ -45,34 +45,23 @@ export default function SongList({ songs }: { songs: Song[] }) {
 }
 
 function SongListItem({ song }: { song: Song }) {
-    let max_proficiency: number | null = Math.max(
-        ...Object.values(song.fileScores).map((score) => {
-            if (
-                Array.isArray(score.proficiency) &&
-                score.proficiency.length > 0
-            ) {
-                return score.proficiency[score.proficiency.length - 1].score;
-            }
-            return 0;
-        })
+    const proficiencies = song.files.map((file) =>
+        file.last_proficiency ? file.last_proficiency : -1
     );
-    if (max_proficiency === -Infinity) {
+    const ratings = song.files.map((file) =>
+        file.last_rating ? file.last_rating : -1
+    );
+
+    let max_proficiency =
+        proficiencies.length > 0 ? Math.max(...proficiencies) : null;
+    let max_rating = ratings.length > 0 ? Math.max(...ratings) : null;
+
+    if (max_proficiency === -1) {
         max_proficiency = null;
     }
-
-    let max_rating: number | null = Math.max(
-        ...Object.values(song.fileScores).map((score) => {
-            if (Array.isArray(score.rating) && score.rating.length > 0) {
-                return score.rating[score.rating.length - 1].score;
-            }
-            return -Infinity;
-        })
-    );
-    if (max_rating === -Infinity) {
+    if (max_rating === -1) {
         max_rating = null;
     }
-
-    console.log(max_rating);
 
     return (
         <Link
@@ -94,9 +83,9 @@ function SongListItem({ song }: { song: Song }) {
                             height: 28,
                             borderRadius: "50%",
                             background: `linear-gradient(135deg, ${
-                                typeof max_rating === "number"
+                                typeof max_proficiency === "number"
                                     ? `hsl(${
-                                          (max_rating / 10) * 120
+                                          (max_proficiency / 10) * 120
                                       }, 80%, 50%)`
                                     : "#ccc"
                             }, #e5e7eb)`,

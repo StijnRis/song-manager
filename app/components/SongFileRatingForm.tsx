@@ -1,25 +1,21 @@
 "use client";
 import { useState, useTransition } from "react";
-import { Song } from "../types";
-import { addSongScore } from "../utils/fileManager";
+import { saveFileScoreAction } from "../utils/serverActions";
+import { Song } from "../utils/types";
 
-export default function SongDetailsForm({
+export default function SongFileRatingForm({
     song,
     fileName,
 }: {
     song: Song;
     fileName: string;
 }) {
-    const fileScore = song.fileScores[fileName] || {};
     const [proficiency, setProficiency] = useState<number | null>(
-        Array.isArray(fileScore.proficiency) && fileScore.proficiency.length > 0
-            ? fileScore.proficiency[fileScore.proficiency.length - 1].score
-            : null
+        song.files.find((file) => file.name === fileName)?.last_proficiency ??
+            null
     );
     const [rating, setRating] = useState<number | null>(
-        Array.isArray(fileScore.rating) && fileScore.rating.length > 0
-            ? fileScore.rating[fileScore.rating.length - 1].score
-            : null
+        song.files.find((file) => file.name === fileName)?.last_rating ?? null
     );
     const [isPending, startTransition] = useTransition();
     const [message, setMessage] = useState("");
@@ -33,7 +29,11 @@ export default function SongDetailsForm({
         }
         startTransition(async () => {
             try {
-                await addSongScore(song.title, fileName, proficiency, rating);
+                await saveFileScoreAction({
+                    fileName,
+                    proficiency,
+                    rating,
+                });
                 setMessage("Score saved!");
             } catch {
                 setMessage("Failed to save score.");
@@ -100,32 +100,6 @@ export default function SongDetailsForm({
                     disabled={isPending}
                 >
                     {isPending ? "Saving..." : "Save Score"}
-                </button>
-                <button
-                    type="button"
-                    onClick={async () => {
-                        setProficiency(null);
-                        setRating(null);
-                        setMessage("");
-                        startTransition(async () => {
-                            try {
-                                await addSongScore(
-                                    song.title,
-                                    fileName,
-                                    null,
-                                    null
-                                );
-                                setMessage("Scores reset!");
-                            } catch {
-                                setMessage("Failed to reset scores.");
-                            }
-                        });
-                    }}
-                    className="px-2 py-1 bg-gray-300 text-gray-800 rounded text-xs font-medium hover:bg-gray-400 transition"
-                    style={{ minWidth: 80 }}
-                    disabled={isPending}
-                >
-                    Reset Score
                 </button>
             </div>
             {message && (
