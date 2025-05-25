@@ -5,6 +5,7 @@
     "scripts": {
         "dev": "next dev --turbopack",
         "build": "next build",
+        "postinstall": "prisma generate",
         "start": "next start",
         "lint": "next lint"
     },
@@ -23,8 +24,5 @@
         "tailwindcss": "^4",
         "tsx": "^4.19.4",
         "typescript": "^5"
-    },
-    "engines": {
-        "node": ">=22.2.0"
     }
 }
