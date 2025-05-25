@@ -46,6 +46,7 @@ export default function SongFileRatingForm({
             onSubmit={handleSubmit}
             className="mb-2 p-2 bg-gray-50 dark:bg-gray-800 rounded shadow w-full"
         >
+            {/* Proficiency */}
             <div className="mb-2">
                 <label className="block mb-1 font-medium text-xs">
                     Proficiency
@@ -70,6 +71,8 @@ export default function SongFileRatingForm({
                     </span>
                 </div>
             </div>
+
+            {/* Rating */}
             <div className="mb-2">
                 <label className="block mb-1 font-medium text-xs">Rating</label>
                 <div className="flex items-center gap-2">
@@ -92,6 +95,8 @@ export default function SongFileRatingForm({
                     </span>
                 </div>
             </div>
+
+            {/* Submit Button */}
             <div className="flex gap-2 mt-2">
                 <button
                     type="submit"
@@ -102,6 +107,8 @@ export default function SongFileRatingForm({
                     {isPending ? "Saving..." : "Save Score"}
                 </button>
             </div>
+
+            {/* Message */}
             {message && (
                 <div className="mt-1 text-xs text-green-600 dark:text-green-400">
                     {message}
