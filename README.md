@@ -43,7 +43,7 @@ A web application to manage and organize your song files and music sheets.
     SONG_DIR=absolute/path/to/your/song/folder
     ```
     - `SITE_PASSWORD`: Password required to access the site
-    - `SONG_DIR`: Path to the folder containing your song directories
+    - `SONG_DIR`: Path to the folder containing your song directories (example in /public/songs can be used)
 5. **Start the development server:**
     ```sh
     pnpm run dev
@@ -57,6 +57,7 @@ A web application to manage and organize your song files and music sheets.
 
 -   The folder specified by `SONG_DIR` should contain subfolders, each named after a song.
 -   Each song folder can contain one or more files (e.g., PDF music sheets).
+-   You can find an example at /public/songs
 
 **Example:**
 
