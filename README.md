@@ -12,6 +12,10 @@ A web application to manage and organize your song files and music sheets.
 -   Database-backed for reliability
 -   Modern, responsive UI
 
+![alt text](img/homepage-dark.png)
+
+![alt text](img/song-dark.png)
+
 ---
 
 ## Getting Started
