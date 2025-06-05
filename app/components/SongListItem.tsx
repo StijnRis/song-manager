@@ -31,59 +31,33 @@ export function SongListItem({ song }: { song: Song }) {
             <div className="flex gap-4 text-sm text-gray-600 dark:text-gray-300">
                 <span className="flex items-center gap-1">
                     Proficiency:{" "}
-                    <span
-                        style={{
-                            display: "inline-flex",
-                            alignItems: "center",
-                            justifyContent: "center",
-                            width: 28,
-                            height: 28,
-                            borderRadius: "50%",
-                            background: `linear-gradient(135deg, ${
-                                typeof max_proficiency === "number"
-                                    ? `hsl(${
-                                          (max_proficiency / 10) * 120
-                                      }, 80%, 50%)`
-                                    : "#ccc"
-                            }, #e5e7eb)`,
-                            color: "#222",
-                            fontWeight: 600,
-                            fontSize: 14,
-                            border: "2px solid #e5e7eb",
-                        }}
-                    >
-                        {typeof max_proficiency === "number"
-                            ? max_proficiency
-                            : "N/A"}
-                    </span>
+                    <ScoreIcon value={max_proficiency} label="Proficiency" />
                 </span>
-                <span>
-                    Rating:{" "}
-                    <span
-                        style={{
-                            display: "inline-flex",
-                            alignItems: "center",
-                            justifyContent: "center",
-                            width: 28,
-                            height: 28,
-                            borderRadius: "50%",
-                            background: `linear-gradient(135deg, ${
-                                typeof max_rating === "number"
-                                    ? `hsl(${
-                                          (max_rating / 10) * 120
-                                      }, 80%, 50%)`
-                                    : "#ccc"
-                            }, #e5e7eb)`,
-                            color: "#222",
-                            fontWeight: 600,
-                            fontSize: 14,
-                            border: "2px solid #e5e7eb",
-                        }}
-                    >
-                        {typeof max_rating === "number" ? max_rating : "N/A"}
-                    </span>
+                <span className="flex items-center gap-1">
+                    Rating: <ScoreIcon value={max_rating} label="Rating" />
                 </span>
             </div>
         </Link>
+    );
+}
+
+function ScoreIcon({ value, label }: { value: number | null; label: string }) {
+    // Color: green for high, yellow for mid, red for low, gray for null
+    let bgColor = "bg-gray-200";
+    let text = "N/A";
+    if (typeof value === "number") {
+        text = value.toString();
+        if (value >= 7) bgColor = "bg-green-400";
+        else if (value >= 4) bgColor = "bg-yellow-400";
+        else bgColor = "bg-red-400";
+    }
+    return (
+        <span
+            className={`inline-flex items-center justify-center w-7 h-7 rounded-full font-semibold text-sm border-2 border-gray-200 mr-1 select-none ${bgColor} text-black`}
+            aria-label={label}
+            title={label}
+        >
+            {text}
+        </span>
     );
 }

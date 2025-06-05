@@ -1,13 +1,12 @@
 import { cookies } from "next/headers";
 import { redirect } from "next/navigation";
-import "server-only";
 
 export default async function LoginPage({
-    searchParams: searchParamsPromise,
+    params,
 }: {
-    searchParams: Promise<{ from?: string }>;
+    params: Promise<{ from?: string }>;
 }) {
-    const searchParams = await searchParamsPromise;
+    const from = (await params).from;
 
     const loginAction = async (formData: FormData) => {
         "use server";
@@ -18,9 +17,7 @@ export default async function LoginPage({
                 httpOnly: true,
                 path: "/",
             });
-            redirect(searchParams.from || "/");
-        } else {
-            // return { error: "Invalid password" };
+            redirect(from || "/");
         }
     };
 
@@ -28,22 +25,24 @@ export default async function LoginPage({
         <form
             action={loginAction}
             method="POST"
-            style={{
-                maxWidth: 300,
-                margin: "100px auto",
-                display: "flex",
-                flexDirection: "column",
-                gap: 12,
-            }}
+            className="max-w-xs mx-auto mt-24 flex flex-col gap-3 p-6 bg-white dark:bg-gray-800 rounded shadow"
         >
-            <h2>Password Required</h2>
+            <h2 className="text-lg font-semibold mb-2 text-center">
+                Password Required
+            </h2>
             <input
                 type="password"
                 name="password"
                 placeholder="Enter password"
                 required
+                className="border rounded px-3 py-2 focus:outline-none focus:ring-2 focus:ring-blue-400 dark:bg-gray-700 dark:text-white"
             />
-            <button type="submit">Login</button>
+            <button
+                type="submit"
+                className="bg-blue-600 text-white rounded px-4 py-2 hover:bg-blue-700 transition"
+            >
+                Login
+            </button>
         </form>
     );
 }
